@@ -27,6 +27,30 @@ cp .env.example .env
 # Add your API key
 # Open .env in any text editor and replace:
 # OPENAI_API_KEY=your-key-here
+# Server Configuration
+# HOST=0.0.0.0
+# PORT=8000
+# DEBUG=True
+
+# # Database
+# DATABASE_URL=sqlite:///./geo_agent.db
+
+# # Vector Store
+# CHROMA_DB_PATH=./chroma_db
+
+# # LLM Settings
+# DEFAULT_MODEL=gpt-4-turbo-preview
+# EMBEDDING_MODEL=text-embedding-3-small
+# MAX_TOKENS=4000
+# TEMPERATURE=0.7
+
+# # Agent Settings
+# MAX_ITERATIONS=10
+# MAX_CONCURRENT_REQUESTS=5
+
+# # Logging Settings
+# # LOG_LEVEL options: DEBUG, INFO, WARNING, ERROR
+# LOG_LEVEL=INFO
 nano .env  # or use VS Code, TextEdit, etc.
 ```
 
