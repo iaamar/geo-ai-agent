@@ -203,6 +203,35 @@ daydream/
 
 ---
 
+## 🌐 Deployment
+
+### Deploy to Render (Full-Stack)
+
+Deploy both backend and frontend with one command:
+
+```bash
+# 1. Ensure code is pushed
+git push
+
+# 2. Go to render.com → Sign up with GitHub
+
+# 3. New → Blueprint → Select your repo
+
+# 4. Render deploys both services automatically:
+#    - Backend: https://daydream-geo-backend.onrender.com
+#    - Frontend: https://daydream-geo-frontend.onrender.com
+
+# 5. Add environment variables in backend:
+#    - OPENAI_API_KEY
+#    - PERPLEXITY_API_KEY
+```
+
+**Complete guide:** See `RENDER_COMPLETE_DEPLOYMENT.md`
+
+**Free tier:** Both services run on Render's free plan
+
+---
+
 ## 🚀 Next Steps
 
 **For development:**

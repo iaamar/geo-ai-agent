@@ -1,0 +1,39 @@
+services:
+  # Backend API
+  - type: web
+    name: daydream-geo-backend
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn src.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false  # You'll add this manually in dashboard
+      - key: PERPLEXITY_API_KEY
+        sync: false  # You'll add this manually in dashboard
+      - key: PYTHON_VERSION
+        value: "3.11"
+
+  # Frontend Static Site
+  - type: web
+    name: daydream-geo-frontend
+    runtime: static
+    plan: free
+    buildCommand: "cd frontend && npm install && npm run build"
+    staticPublishPath: ./frontend/dist
+    pullRequestPreviewsEnabled: true
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: daydream-geo-backend
+          envVarKey: RENDER_EXTERNAL_URL
+        # This will be: https://daydream-geo-backend.onrender.com/api
+        # We need to append /api manually - see note below
+      - key: NODE_VERSION
+        value: "18"
+
+# Note: After deployment, you'll need to manually update VITE_API_URL in the frontend service
+# to add "/api" suffix: https://daydream-geo-backend.onrender.com/api
+
