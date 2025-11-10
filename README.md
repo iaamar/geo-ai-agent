@@ -205,30 +205,25 @@ daydream/
 
 ## 🌐 Deployment
 
-### Deploy to Render (Full-Stack)
+### Deploy to Railway (Free & Easy)
 
-Deploy both backend and frontend with one command:
+Deploy both backend and frontend in 2 minutes:
 
 ```bash
-# 1. Ensure code is pushed
-git push
+# 1. Go to railway.app → Sign in with GitHub
 
-# 2. Go to render.com → Sign up with GitHub
+# 2. New Project → Deploy from GitHub repo
 
-# 3. New → Blueprint → Select your repo
+# 3. Select your repo → Railway auto-detects both services!
 
-# 4. Render deploys both services automatically:
-#    - Backend: https://daydream-geo-backend.onrender.com
-#    - Frontend: https://daydream-geo-frontend.onrender.com
-
-# 5. Add environment variables in backend:
-#    - OPENAI_API_KEY
-#    - PERPLEXITY_API_KEY
+# 4. Add environment variables:
+#    Backend: OPENAI_API_KEY, PERPLEXITY_API_KEY
+#    Frontend: VITE_API_URL = (backend URL + /api)
 ```
 
-**Complete guide:** See `RENDER_COMPLETE_DEPLOYMENT.md`
+**Complete guide:** See `DEPLOY.md`
 
-**Free tier:** Both services run on Render's free plan
+**Free tier:** $5 credit/month (enough for your app, no credit card required)
 
 ---
 
