@@ -1,0 +1,38 @@
+[build]
+  # Build command - runs from root
+  command = "cd frontend && npm install && npm run build"
+  
+  # Publish directory - where the built files are
+  publish = "frontend/dist"
+  
+  # Base directory
+  base = "/"
+
+# Environment variables needed for build
+[build.environment]
+  NODE_VERSION = "18"
+
+# SPA routing - redirect all routes to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+
+# API proxy - route API calls to backend (if hosted separately)
+[[redirects]]
+  from = "/api/*"
+  to = "http://localhost:8000/api/:splat"
+  status = 200
+  force = true
+  # Note: Update this URL if backend is hosted elsewhere
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
