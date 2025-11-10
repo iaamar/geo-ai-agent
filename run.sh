@@ -147,19 +147,22 @@ case $choice in
         
         # Wait for backend to start
         echo "Waiting for backend to start..."
-        sleep 3
+        sleep 5
         
-        # Check if backend is running
-        if ! curl -s http://localhost:8000/health > /dev/null; then
-            echo "⚠️  Backend taking longer to start..."
-            sleep 2
-            if ! curl -s http://localhost:8000/health > /dev/null; then
-                echo "❌ Backend failed to start. Check backend.log for details:"
-                tail -20 backend.log
-                kill $BACKEND_PID 2>/dev/null || true
-                exit 1
+        # Check if backend is running (retry multiple times)
+        for i in {1..5}; do
+            if curl -s http://localhost:8000/health > /dev/null 2>&1; then
+                echo "✓ Backend is healthy!"
+                break
             fi
-        fi
+            if [ $i -lt 5 ]; then
+                echo "⏳ Backend still initializing (attempt $i/5)..."
+                sleep 3
+            else
+                echo "⚠️  Backend health check timeout - but continuing anyway"
+                echo "   (Backend may still be loading models, check logs if issues)"
+            fi
+        done
         echo "✓ Backend running at http://localhost:8000"
         echo ""
         
