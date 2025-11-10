@@ -1,33 +1,24 @@
 services:
-  # Backend API
+  # Full-Stack Service (Backend + Frontend)
   - type: web
-    name: daydream-geo-backend
+    name: daydream-geo-agent
     runtime: python
-    buildCommand: "pip install -r requirements.txt"
+    buildCommand: |
+      pip install -r requirements.txt &&
+      curl -fsSL https://deb.nodesource.com/setup_18.x | bash - &&
+      apt-get install -y nodejs &&
+      cd frontend && npm install && npm run build
     startCommand: "uvicorn src.main:app --host 0.0.0.0 --port $PORT"
     healthCheckPath: /health
     envVars:
       - key: OPENAI_API_KEY
-        sync: false  # You'll add this manually in dashboard
+        sync: false
       - key: PERPLEXITY_API_KEY
-        sync: false  # You'll add this manually in dashboard
+        sync: false
       - key: PYTHON_VERSION
         value: "3.11"
 
-  # Frontend Static Site
-  - type: static
-    name: daydream-geo-frontend
-    buildCommand: "cd frontend && npm install && npm run build"
-    staticPublishPath: ./frontend/dist
-    pullRequestPreviewsEnabled: true
-    envVars:
-      - key: VITE_API_URL
-        value: https://daydream-geo-backend.onrender.com/api
-      - key: NODE_VERSION
-        value: "18"
-
-# Notes:
-# - Backend runs on free tier (automatically assigned)
-# - Frontend static sites are free by default
-# - After backend deploys, update VITE_API_URL if backend URL is different
+# Note: Frontend is built during deployment and served by FastAPI
+# The backend will serve static files from frontend/dist folder
+# You'll need to update src/main.py to mount the static files (see instructions below)
 
