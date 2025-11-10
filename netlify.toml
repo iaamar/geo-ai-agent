@@ -19,13 +19,12 @@
   status = 200
   force = false
 
-# API proxy - route API calls to backend (if hosted separately)
-[[redirects]]
-  from = "/api/*"
-  to = "http://localhost:8000/api/:splat"
-  status = 200
-  force = true
-  # Note: Update this URL if backend is hosted elsewhere
+# API proxy disabled - backend not deployed to Netlify
+# To run with full functionality, run locally: ./run.sh
+# [[redirects]]
+#   from = "/api/*"
+#   to = "http://localhost:8000/api/:splat"
+#   status = 200
 
 # Headers for security
 [[headers]]

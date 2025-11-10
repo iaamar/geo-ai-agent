@@ -74,3 +74,12 @@ temp/
 *.deprecated
 *.bak
 
+
+# Absolutely ensure .env files are ignored
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+*.env
+!.env.example
