@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Loader2, GitCompare, ChevronDown, ChevronUp, CheckCircle, TrendingUp, ExternalLink, Shuffle } from 'lucide-react'
+import { Loader2, GitCompare, ChevronDown, ChevronUp, CheckCircle, TrendingUp, ExternalLink, Shuffle, AlertTriangle, AlertCircle } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { API_BASE_URL, isBackendAvailable } from '../config/api'
 
 // Real-world comparison examples
 const COMPARISON_EXAMPLES = [
@@ -63,10 +64,19 @@ function ComparePage() {
   
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
+  const [error, setError] = useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    // Check if backend is available
+    if (!isBackendAvailable()) {
+      setError('Backend API is not available. This is a frontend-only demo deployment.')
+      return
+    }
+    
     setLoading(true)
+    setError(null)
 
     try {
       const payload = {
@@ -75,10 +85,11 @@ function ComparePage() {
         platforms: ['chatgpt', 'perplexity']
       }
 
-      const response = await axios.post('/api/compare', payload)
+      const response = await axios.post(`${API_BASE_URL}/compare`, payload)
       setResult(response.data)
     } catch (err) {
       console.error('Comparison failed:', err)
+      setError(err.response?.data?.detail || err.message || 'Comparison failed')
     } finally {
       setLoading(false)
     }
@@ -86,6 +97,18 @@ function ComparePage() {
 
   return (
     <div className="space-y-6">
+      {/* Backend Status Warning */}
+      {!isBackendAvailable() && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start">
+          <AlertTriangle className="h-5 w-5 text-amber-600 mr-3 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="font-medium text-amber-900">Demo Mode - Backend Not Connected</h3>
+            <p className="text-sm text-amber-700 mt-1">
+              Backend API is required for comparison functionality. Run locally or deploy the backend.
+            </p>
+          </div>
+        </div>
+      )}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold text-slate-900 mb-2">
           Brand Comparison
@@ -192,6 +215,25 @@ function ComparePage() {
           </button>
         </form>
       </div>
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start">
+          <AlertCircle className="h-5 w-5 text-red-600 mr-3 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="font-medium text-red-900">Comparison Error</h3>
+            <p className="text-sm text-red-700 mt-1">{error}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading && (
+        <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-slate-200">
+          <Loader2 className="animate-spin h-12 w-12 text-primary-600 mx-auto mb-4" />
+          <p className="text-slate-600">Comparing brands...</p>
+        </div>
+      )}
 
       {result && (
         <div className="space-y-6">

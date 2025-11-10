@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Clock, TrendingUp } from 'lucide-react'
+import { Clock, TrendingUp, AlertTriangle } from 'lucide-react'
+import { API_BASE_URL, isBackendAvailable } from '../config/api'
 
 function HistoryPage() {
   const [history, setHistory] = useState([])
@@ -11,8 +12,14 @@ function HistoryPage() {
   }, [])
 
   const loadHistory = async () => {
+    // Skip loading if backend is not available
+    if (!isBackendAvailable()) {
+      setLoading(false)
+      return
+    }
+    
     try {
-      const response = await axios.get('/api/history?limit=20')
+      const response = await axios.get(`${API_BASE_URL}/history?limit=20`)
       setHistory(response.data.analyses || [])
     } catch (err) {
       console.error('Failed to load history:', err)
@@ -31,6 +38,19 @@ function HistoryPage() {
           View past GEO analyses
         </p>
       </div>
+
+      {/* Backend Status Warning */}
+      {!isBackendAvailable() && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start">
+          <AlertTriangle className="h-5 w-5 text-amber-600 mr-3 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="font-medium text-amber-900">Demo Mode - Backend Not Connected</h3>
+            <p className="text-sm text-amber-700 mt-1">
+              Backend API is required to view analysis history. Run locally or deploy the backend.
+            </p>
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div className="text-center py-12">

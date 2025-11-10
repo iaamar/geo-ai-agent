@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Loader2, Search, AlertCircle, CheckCircle, TrendingUp, Shuffle } from 'lucide-react'
+import { Loader2, Search, AlertCircle, CheckCircle, TrendingUp, Shuffle, AlertTriangle } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import ReasoningDisplay from '../components/ReasoningDisplay'
 import RealTimeProgress from '../components/RealTimeProgress'
 import EvaluationDisplay from '../components/EvaluationDisplay'
 import { useAnalysisProgress } from '../hooks/useAnalysisProgress'
+import { API_BASE_URL, isBackendAvailable } from '../config/api'
 
 // Real-world GEO analysis examples
 const REAL_WORLD_EXAMPLES = [
@@ -110,6 +111,13 @@ function AnalysisPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    // Check if backend is available
+    if (!isBackendAvailable()) {
+      setError('Backend API is not available. This is a frontend-only demo deployment. To run the full application with backend functionality, please run it locally using ./run.sh or deploy the backend to a service like Render, Railway, or Heroku.')
+      return
+    }
+    
     setLoading(true)
     setError(null)
     setResult(null)
@@ -127,7 +135,7 @@ function AnalysisPage() {
       // Simulate progress during analysis
       simulateProgress(payload)
 
-      const response = await axios.post('/api/analyze', payload)
+      const response = await axios.post(`${API_BASE_URL}/analyze`, payload)
       
       // Update progress with actual data
       updateStepsWithRealData(response.data)
@@ -234,6 +242,24 @@ function AnalysisPage() {
         </div>
         <p className="text-xs text-slate-500 mt-2">{currentExample.description}</p>
       </div>
+
+      {/* Backend Status Warning */}
+      {!isBackendAvailable() && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start">
+          <AlertTriangle className="h-5 w-5 text-amber-600 mr-3 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="font-medium text-amber-900">Demo Mode - Backend Not Connected</h3>
+            <p className="text-sm text-amber-700 mt-1">
+              This is a frontend-only deployment. To use the full functionality with live analysis:
+            </p>
+            <ul className="text-sm text-amber-700 mt-2 ml-4 list-disc">
+              <li>Run locally: <code className="bg-amber-100 px-1 rounded">./run.sh</code></li>
+              <li>Deploy the backend to Render, Railway, or similar service</li>
+              <li>Set the <code className="bg-amber-100 px-1 rounded">VITE_API_URL</code> environment variable in Netlify</li>
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* Analysis Form */}
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
