@@ -3,11 +3,7 @@ services:
   - type: web
     name: daydream-geo-agent
     runtime: python
-    buildCommand: |
-      pip install -r requirements.txt &&
-      curl -fsSL https://deb.nodesource.com/setup_18.x | bash - &&
-      apt-get install -y nodejs &&
-      cd frontend && npm install && npm run build
+    buildCommand: pip install -r requirements.txt
     startCommand: "uvicorn src.main:app --host 0.0.0.0 --port $PORT"
     healthCheckPath: /health
     envVars:
@@ -18,7 +14,14 @@ services:
       - key: PYTHON_VERSION
         value: "3.11"
 
-# Note: Frontend is built during deployment and served by FastAPI
-# The backend will serve static files from frontend/dist folder
-# You'll need to update src/main.py to mount the static files (see instructions below)
+# IMPORTANT: Frontend must be deployed as a separate Static Site
+# After this service deploys:
+# 1. Create a New Static Site in Render
+# 2. Build Command: cd frontend && npm install && npm run build
+# 3. Publish Directory: frontend/dist
+# 4. Environment Variable: VITE_API_URL = https://daydream-geo-agent.onrender.com/api
+# 
+# This gives you:
+# - Backend: https://daydream-geo-agent.onrender.com/api
+# - Frontend: https://daydream-geo-agent-frontend.onrender.com
 
