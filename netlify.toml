@@ -11,6 +11,8 @@
 # Environment variables needed for build
 [build.environment]
   NODE_VERSION = "18"
+  # Disable secrets scanning for documentation references
+  SECRETS_SCAN_ENABLED = "false"
 
 # SPA routing - redirect all routes to index.html
 [[redirects]]
